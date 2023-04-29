@@ -1,72 +1,31 @@
-
 from flask import Flask, request
 
 app = Flask(__name__)
-palabras = {}
+
+words = {}
 
 @app.route('/')
 def home():
-    return 'bienvenido(a)!'
+    return 'Welcome!'
 
-@app.route('/ingresar', methods=['GET', 'POST'])
-def ingresar():
+@app.route('/add-word', methods=['GET', 'POST'])
+def add_word():
     if request.method == 'POST':
-        palabra = request.form['palabra']
-        significado = request.form['significado']
-        palabras[palabra] = significado
-        return 'palabra ingresada: {} - {}'.format(palabra, significado)
+        # Get the word and its meaning from the form data
+        word = request.form['word']
+        meaning = request.form['meaning']
+        # Add the word and its meaning to the dictionary
+        words[word] = meaning
+        # Return a message indicating that the word was added
+        return 'Word added successfully: {} - {}'.format(word, meaning)
     else:
+        # Display a form for adding a new word
         return '''
             <form method="post">
-                <label>palabra:</label>
-                <input type="text" name="palabra"><br>
-                <label>significado:</label>
-                <input type="text" name="significado"><br>
-                <input type="submit" value="ingresar">
+                <label>Word:</label>
+                <input type="text" name="word"><br>
+                <label>Meaning:</label>
+                <input type="text" name="meaning"><br>
+                <input type="submit" value="Add Word">
             </form>
         '''
-
-@app.route('/buscar')
-def buscar():
-    palabra = request.args.get('palabra')
-    if palabra in palabras:
-        return 'significado: {}'.format(palabras[palabra])
-    else:
-        return 'no encontrada '
-
-@app.route('/eliminar')
-def eliminar():
-    palabra = request.args.get('palabra')
-    if palabra in palabras:
-        del palabra[palabra]
-        return 'palabra eliminada'
-    else:
-        return 'no encontrada'
-
-@app.route('/editar', methods=['GET', 'POST'])
-def editar():
-    if request.method == 'POST':
-        palabra = request.form['palabra']
-        significado = request.form['significado']
-        if palabra in palabras:
-            palabras[palabra] = significado
-            return 'listo'
-        else:
-            return 'no existe '
-    else:
-        return '''
-            <form method="post">
-                <label>palabra:</label>
-                <input type="text" name="palabra"><br>
-                <label>nuevo significado:</label>
-                <input type="text" name="significado"><br>
-                <input type="submit" value="actualizar">
-            </form>
-        '''
-
-@app.route('/salir')
-def salir():
-    return 'Goodbye!'
-
-if __name__ == '__main__':
-    app.run()
